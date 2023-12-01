@@ -492,17 +492,4 @@ $('#nav-btn-c').on('click',function() {
     } )
   }
 
-function welcome(){
-Swal.fire({
-    html: `<pre>'<?=setting[13]?>'</pre>`,
-  //title: "ยินดีต้อนรับเข้าสู่ระบบสารบรรณอิเล็กทรอนิกส์",
-  //  text: "<?=setting[13]?>",
-  imageUrl: "<?=setting[12]?>",
-  imageWidth: 400,
-  imageHeight: 200,
-  imageAlt: "Custom image",
-  showConfirmButton: true,
-  //timer: 3000
-});
 
-}
