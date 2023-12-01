@@ -1,4 +1,3 @@
-<script>
 
   function waiting(){
      Swal.fire({ title: 'loading..' });
@@ -508,4 +507,4 @@ Swal.fire({
 });
 
 }
-</script>
+
