@@ -7,7 +7,7 @@
       Swal.close();
         },2000)
   }
-//<-- -----------------------------------------โหลดข้อมูลผู้ใช้มาเก็บไว้ก่อน -->
+
   var datalogin,scripturl
   google.script.run.withSuccessHandler((result) => {
     datalogin = result
@@ -15,12 +15,12 @@
     // console.log(datalogin)
   }).searchData('user')
 
-//<-- -----------------------------------------สคริปต์รีโหลดหน้าเว็บ -->
+
   google.script.run.withSuccessHandler(function (url) {
     scripturl = url
   }).getURL();
 
-//<-- -------------------------------------กรณีที่มีการรีโหลดหน้าเว็บ ให้มาเช็คข้อมูลจาก sessionStorage
+
   let status, name, user_save, token
   window.addEventListener('load', function () {
     
@@ -44,7 +44,7 @@
       $('#commandbtn').show()
       $('#announcebtn').show()
       
-// <-- ------------------------------ปุ่มเรียกฟอร์ม -->
+
      $('#nav-btn').removeClass('d-none')
      $('#nav-btn2').addClass('d-none')
      $('#nav-btn3').removeClass('d-none')
@@ -73,17 +73,17 @@
     }
   })
 
-//<-- ------------------------------------ปุ่มรับหนังสือภายนอก -->
+
   $('#nav-btn').click(function(){
     addform1()
   })
 
-//<-- ------------------------------------ปุ่มเพิ่มหนังสือบันทึก -->
+
   $('#nav-btn2').click(function(){
     addform5()
   })
 
-//<-- ------------------------------------ฟอร์ม Logout -->
+
   function logout() {
     Swal.fire({
       position: 'top',
@@ -109,7 +109,7 @@
     })
   }
 
-//<-- ------------------------------------ฟอร์ม Login -->
+
   function loginform() {
     Swal.fire({
       title: 'ลงชื่อเข้าใช้งาน',
@@ -153,7 +153,7 @@
             })
             // notification(rowindex[0][1])
            $('#nav-btn3').removeClass('d-none')
-//<-- -----------------------------กรณีที่ลงชื่อเข้าใช้เป็น Admin -->
+
             if(rowindex[0][6] == 'admin'){
                $('#nav-btn').removeClass('d-none')
                $('#nav-btn2').addClass('d-none')
@@ -166,7 +166,7 @@
                $('#nav-btn').addClass('d-none')
                $('#nav-btn2').removeClass('d-none')
               waiting()
-//<-- -----------------------------กรณีที่ลงชื่อเข้าใช้เป็น User -->
+
                google.script.run.withSuccessHandler((result) => {
                   dataSend = result
                     showUserTable({name: rowindex[0][1],admin:false})
@@ -188,7 +188,7 @@
     })
   }
 
-//<-- -----------------------------แแสดงตาราง -->
+
   function showUserTable({name,admin}) {
     if (admin) {
       $('#table1').show() //แสดงตารางหนังสือรับ
@@ -233,20 +233,20 @@ showUserTable
       $('#table6').hide()
     }
   }
-//searchData
-//<-- --------------------------------------รีโหลดเว็บ -->
+
+
   function reLoad() {
       window.open(scripturl, '_top');
   }
 
-//<-- --------------------------------------โหลด -->
+
   function loadBookIn() {
       Swal.fire({ title: 'รอสักครู่..กำลังโหลดข้อมูล' });
         Swal.showLoading();
         reLoad()
   }
 
-//<-- --------------------------------------แสดงฟอร์ม Modal หนังสือรับ -->
+
   function addform1() {
     event.preventDefault();
     setForm('add', 'ฟอร์มหนังสือรับ')
@@ -256,7 +256,7 @@ showUserTable
     // $('#addbtn').addClass('active');
   }
 
-//<-- --------------------------------------แสดงฟอร์ม Modal หนังสือส่ง -->
+
   function addform2() {
     event.preventDefault();
     setForm('send', 'ฟอร์มหนังสือส่ง')
@@ -264,7 +264,7 @@ showUserTable
     $('#modal_form1').modal('show')
   }
 
-//<-- ----------------------------------แสดงฟอร์ม Modal หนังสือส่งคำสั่ง -->
+
   function addform3() {
     event.preventDefault();
     setForm('command', 'ฟอร์มคำสั่ง')
@@ -273,7 +273,7 @@ showUserTable
     $('#modal_form1').modal('show')
   }
 
-//<-- -----------------------------------แสดงฟอร์ม Modal หนังสือประกาศ -->
+
   function addform4() {
     event.preventDefault();
     setForm('announce', 'ฟอร์มประกาศ')
@@ -282,7 +282,7 @@ showUserTable
     $('#modal_form1').modal('show')
   }
 
-//<-- ------------------------------แสดงฟอร์ม Modal หนังสือบันทึกข้อความ -->
+
   function addform5() {
     event.preventDefault();
     setForm('record', 'ฟอร์มบันทึกข้อความ')
@@ -291,19 +291,19 @@ showUserTable
     $('#modal_form1').modal('show')
   }
 
-//<-- ------------------------------แสดงชื่อฟอร์ม -->
+
   function setForm(target,title){
     $('#targetFunc').val(target)
     $('#form-title').text(title)
   }
 
-//<-- ------------------------------แสดงตาราง -->
+
   function toggleTable(table){
     $('#table1,#table2,#table3,#table4,#table5,#table6').hide()
     $(table).show()
   }
 
-//<-- ------------------------------แสดง/ซ่อน Input -->
+
   function toggleFormInput(inputs){
     $('input, select, textarea').not('[type="file"]').not('.hide').prop('required',true)
     $('.ishide').removeClass('ishide').show()
@@ -314,7 +314,7 @@ showUserTable
     })
   }
 
-//<-- -----------------------------------------แสดงตารางหนังสือส่ง -->
+
     function showTableDataPost() {
     event.preventDefault();
     toggleTable('#table3')
@@ -324,7 +324,7 @@ showUserTable
     $('#nav-btn').addClass('d-none')
   }
 
-//<-- -----------------------------------------แสดงตารางหนังสือคำสั่ง -->
+
     function showTableDataCommand() {
     event.preventDefault();
     toggleTable('#table4')
@@ -334,7 +334,7 @@ showUserTable
     $('#nav-btn').addClass('d-none')
   }
 
-//<-- -----------------------------------------แสดงตารางหนังสือประกาศ -->
+
     function showTableAnnouce() {
     event.preventDefault();
     toggleTable('#table5')
@@ -344,7 +344,7 @@ showUserTable
     $('#nav-btn').addClass('d-none')
   }
 
-//<-- -----------------------------------------แสดงตารางหนังสือบันทึกข้อความ/แทงหนังสือภายใน -->
+
     function showTableRecord() {
     event.preventDefault();
     toggleTable('#table6')
@@ -356,7 +356,7 @@ showUserTable
     toggleTable('#table2')
   }
 
-//<-- --------------------------------------------------แสดงหน้าหลัก -->
+
     function home() {
     event.preventDefault();
     toggleTable('#table1')
@@ -366,7 +366,7 @@ showUserTable
     $('#nav-btn-b').addClass('d-none')
   }
 
-//<-- ---------------------------------------------ทำแถบสีเมนูที่คลิกเลือก -->
+
 $('.sidebar-nav').on('click', 'li', function() {
     $('.sidebar-nav li.active').removeClass('active');
     $(this).addClass('active');
@@ -390,7 +390,7 @@ $('#nav-btn-b').on('click',function() {
 $('#nav-btn-c').on('click',function() {
   addform4()
 })
-//<-- ------------------------------------บันทึกลงชีต หนังสือรับ(จากภายนอก) -->
+
   const saveForm = (obj) =>  {
         event.preventDefault()
         let user = $('#nameAdmin').text()
@@ -407,7 +407,7 @@ $('#nav-btn-c').on('click',function() {
         }
   }
 
-//<-- ------------------------------------บันทึกลงชีต หนังสือส่ง -->
+
   const saveFormPost = (obj) =>  {
         event.preventDefault()
 
@@ -421,7 +421,7 @@ $('#nav-btn-c').on('click',function() {
       }).saveDataPost(obj) 
   }
 
-//<-- ------------------------------------บันทึกลงชีต หนังสือคำสั่ง -->
+
   const saveFormCommand = (obj) =>  {
         event.preventDefault()
         let user = $('#nameAdmin').text()
@@ -435,7 +435,7 @@ $('#nav-btn-c').on('click',function() {
       }).saveDataCommand(obj) 
         }
 
-//<-- ------------------------------------บันทึกลงชีต หนังสือประกาศ -->
+
   const saveFormAnnounce = (obj) =>  {
         event.preventDefault()
         // let user = $('#nameAdmin').text()
@@ -449,7 +449,7 @@ $('#nav-btn-c').on('click',function() {
       }).saveDataAnnouce(obj) 
   }
 
-//<-- ------------------------------------บันทึกลงชีต หนังสือบันทึกข้อความ(หนังสือภายใน) -->
+
   const saveFormRecord = (obj) =>  {
         event.preventDefault()
         let user = $('#nameAdmin').text()
@@ -468,7 +468,7 @@ $('#nav-btn-c').on('click',function() {
         }
   }
 
-//<-- ---------------------------------------สวิตช์ฟอร์มเมื่อกดปุ่ม submit -->
+
   function processForm(data){
     let targetFunc = $('#targetFunc').val()
     console.log(targetFunc)
