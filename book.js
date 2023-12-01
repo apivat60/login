@@ -1,3 +1,4 @@
+
   function waiting(){
      Swal.fire({ title: 'loading..' });
       Swal.showLoading();
@@ -19,7 +20,7 @@
   }).getURL();
 
 //<-- -------------------------------------กรณีที่มีการรีโหลดหน้าเว็บ ให้มาเช็คข้อมูลจาก sessionStorage
-  let status, name, user_save, token
+  let status, name, user_save, token, adminLogin
   window.addEventListener('load', function () {
     
     status = sessionStorage.getItem("Status");
@@ -127,7 +128,7 @@
           Swal.showValidationMessage(`กรุณากรอกข้อมูลให้ครบ`)
         } else {
           if (rowindex != "") {
-            console.log('ชื่อผู้เข้าสู่ระบบ คือ ' + rowindex[0][1])
+            console.log('ชื่อผู้เข้าสู่ระบบ คือ ' + rowindex[0][1]+'สถานะเป็น '+rowindex[0][6])
             
             user_save = rowindex[0][1]
 
@@ -140,8 +141,9 @@
             $('#recordbtn').show() //เมนู sidebar บันทึกข้อความ
             $('#loginbtn').hide()
             $('#homebtn').addClass('active');
-            sessionStorage.setItem("Status", rowindex[0][6]);
-            sessionStorage.setItem("Name", rowindex[0][1]);
+          adminLogin = rowindex[0][6]
+           sessionStorage.setItem("Status", rowindex[0][6]);
+          sessionStorage.setItem("Name", rowindex[0][1]);
             Swal.fire({
               position: 'top',
               icon: 'success',
@@ -155,6 +157,7 @@
             if(rowindex[0][6] == 'admin'){
                $('#nav-btn').removeClass('d-none')
                $('#nav-btn2').addClass('d-none')
+               $('#nav-btn-c').addClass('d-none')
                 
                 waiting()
            //    $('#nav-btn').text('เพิ่มข้อมูล').attr('data-form', 'formAdd').removeClass('d-none')
@@ -267,7 +270,7 @@ showUserTable
     event.preventDefault();
     setForm('command', 'ฟอร์มคำสั่ง')
     $('#closeModal1').click()
-    toggleFormInput(['#input3','#input4'])
+    toggleFormInput(['#input1','#input3','#input4'])
     $('#modal_form1').modal('show')
   }
 
@@ -276,7 +279,7 @@ showUserTable
     event.preventDefault();
     setForm('announce', 'ฟอร์มประกาศ')
     $('#closeModal1').click()
-    toggleFormInput(['#input3','#input4'])
+    toggleFormInput(['#input1','#input3','#input4'])
     $('#modal_form1').modal('show')
   }
 
@@ -356,12 +359,20 @@ showUserTable
 
 //<-- --------------------------------------------------แสดงหน้าหลัก -->
     function home() {
+console.log(adminLogin)
     event.preventDefault();
     toggleTable('#table1')
-    $('#nav-btn').removeClass('d-none')
     $('#nav-btn-c').addClass('d-none')
     $('#nav-btn-a').addClass('d-none')
     $('#nav-btn-b').addClass('d-none')
+    if(adminLogin == 'admin'){
+      
+ $('#nav-btn').removeClass('d-none')
+    }else{
+ $('#nav-btn').addClass('d-none')
+    }
+   
+
   }
 
 //<-- ---------------------------------------------ทำแถบสีเมนูที่คลิกเลือก -->
@@ -492,588 +503,3 @@ $('#nav-btn-c').on('click',function() {
     } )
   }
 
-  // ------------ ดึงข้อมูลจาก Modal ที่จะส่งไปบันทึกลงชีต send --------------//
-  var row_dt
-  function sendto(el) {
-    let r = $(el).closest('tr')
-    row_dt = $('#datatable').DataTable().row(r)
-    clearlist()
-    $('#exampleModal').attr('data-id', row_dt.data()[0])
-    .modal('show')
-    // let inputID = el.parentNode.parentNode.cells[1].innerHTML;  //รหัส
-    let row = row_dt.data()
-    console.log(row)
-    $('#inputID').val(row[0])
-    $('#input1').val(row[2])
-    $('#input2').val(row[3])
-    $('#input3').val(row[4])
-    $('#input4').val(row[5])
-    $('#input5').val(row[6])
-    $('#input6').val(row[7])
-    $('#input7').val(row[8])
-    $('#input8').val(row[9])
-    $('#input9').val(row[10])
-    $('#input10').val(row[11])
-    $('#input11').val(row[12])
-    return
-
-  }
-
-// -----------------  เมื่อมีการรับหนังสือภายนอกแล้ว ให้ยืนยันการรับ------------//
-function sendRecive(el){
-  let r = $(el).closest('tr')
-  row_dt = $('#tableSend').DataTable().row(r)
-  //console.log(row_dt.data()[2])
-  let id = row_dt.data()[2] //เลขคำสั่งหนังสือ
-  let uname = row_dt.data()[13] //ผู้ปฏิบัติ
-  console.log(id)
-  console.log(uname)
-  Swal.fire({
-        title: 'ยืนยันการรับหนังสือ ??',
-        showDenyButton: true,
-        confirmButtonText: 'ใช่ ยืนยันเลย',
-        denyButtonText: 'ไม่',
-    }).then((result) => {
-        if (result.isConfirmed) {
-           $(el).removeClass('btn-danger').addClass('btn-success').html("<i class='bx bxs-user' ></i>")
-      google.script.run.withSuccessHandler(()=>{
-        Swal.fire('รับหนังสือเรียบร้อยแล้ว', '', 'success');
-        google.script.run.withSuccessHandler(()=>{
-          console.log('อัปเดตเปลี่ยนสีไอคอนเรียบร้อยแล้ว')
-        }).updateAfterReciveBook(id,uname) //อัปเดตไอคอนหลังจากกดรับแล้ว
-     }).reciveBook(id,uname)
-       Swal.fire({ title: 'รอสักครู่..กำลังบันทึกข้อมูล' });
-       Swal.showLoading();
-        } else if (result.isDenied) {
-            Swal.fire('ยกเลิกการรับหนังสือ', '', 'info');
-        }
-    });
-}
-
-
-  google.script.run.withSuccessHandler(searchData2).searchData('user')
-  function searchData2(item){
-   if(item){
-      let result2 = "<div><table class='table table-sm'>"+
-                   "<thead class='bg-info'>"+
-                     "<tr>"+ 
-                       "<th width='2%'>ที่</th>"+
-                       "<th width='50%'>ชื่อ/กลุ่ม/กอง</th>"+
-                       "<th width='28%'>ตำแหน่ง</th>"+
-                       "<th width='10%'>เลือก</th>"+
-                       "<th class='hide'>line</th>"+
-                     "</tr>"+
-                  "</thead>";
-          var n=1
-           for(var i=0; i<item.length; i++) {
-                result2 += "<tr>";
-                result2 += '<td>'+ ([n]) + '</td>';   
-                result2 += '<td>'+ (item[i][1]) + '</td>';   
-                result2 += '<td>'+ (item[i][2]) + '</td>';
-                result2 += '<td class="hide">'+ (item[i][3]) + '</td>';
-                result2 += "<td> <button onclick='editData3(this)' class='btn btn-primary btn-sm me-1'>เลือก</button></td>" ;
-                result2 += "</tr>";
-                n++
-      }
-                result2 += "</table></div>";
-                var div = document.getElementById('example2').innerHTML = result2;
-   }
-}
-
-//<!-- -------------------------------------------ดึงข้อมูลใส่ในตัวแปร -->
-function editData3(el){
-    if($(el).data('select') == true){
-      $(el).attr('data-select', false).parents('tr').removeClass('bg-warning-subtle')
-    }else{
-      $(el).attr('data-select', true).parents('tr').addClass('bg-warning-subtle')
-    }
-   inputName = el.parentNode.parentNode.cells[1].innerHTML;  
-   lineuser = el.parentNode.parentNode.cells[3].innerHTML; 
-   inputID = $('#inputID').val()
-   input1 = $('#input1').val()
-   input2 = $('#input2').val()
-   input3 = $('#input3').val()
-   input4 = $('#input4').val()
-   input5 = $('#input5').val()
-   input6 = $('#input6').val()
-   input7 = $('#input7').val()
-   input8 = $('#input8').val()
-   input9 = $('#input9').val()
-   input10 = $('#input10').val()
-   input11 = $('#input11').val()
-   addtocart()
- 
-}
-
- //<!-- -------------------------------------------นำข้อมูลที่ได้ใส่ในอะรย์ เพื่อจะส่งไปบันทึกลงชีต -->
-var cart = [];
-function addtocart() {
-    var pass = true;
-    console.log(inputName)
-    if(pass) {
-      if(cart.findIndex(a => a.inputName == inputName) > -1) return
-        var obj = {
-            inputID: inputID,
-            input1: input1,
-            input2: input2,
-            input3: input3,
-            input4: input4,
-            input5: input5,
-            input6: input6,
-            input7: input7,
-            input8: input8,
-            input9: input9,
-            input10: input10,
-            input11: input11,
-            inputName: inputName,
-            lineuser: lineuser,
-            
-        };
-        cart.push(obj)
-        console.log(cart)
-    }
-        rendercart();
-}
-
-function clearlist() {
-    cart = [];
-   // $("#mycart").html(`<p>โปรดเลือกรายการ</p>`)
-}
-
-//<-- ------------------------------แสดงการเลือก ก่อนที่จะส่งข้อมูลไปบันทึก สามารถลบตัวเลือก และเลือกใหม่ได้-------------------- -->
-function rendercart() {
-    if(cart.length > 0) {
-      let result = "<div><table >"+
-                   "<thead class='bg-info'>"+
-                     "<tr>"+ 
-                       "<th width='10px'>ที่</th>"+
-                       "<th width='100px'>แจ้งทราบ</th>"+
-                       "<th width='10px'>ลบ</th>"+
-
-                     "</tr>"+
-                  "</thead>";
-        var n=1
-           for(var i=0; i<cart.length; i++) {
-                result += "<tr>";
-                result += '<td>'+ [n]+ '</td>';    
-                result += '<td>'+ (cart[i].inputName) + '</td>';     
-                result += '<td onclick="del(this)" data-menuid="+ (cart[i].inputID) +"><i class="bx bx-trash bx-sm text-danger"></i></td>';   
-                result += "</tr>";
-                n++
-               
-      }
-         $("#mycart").html(result)
-    }
-}
-
-// <!-- --------------------------------------------ลบตัวที่เลือก------------------ -->
-function del(row,row_price){
-  const tr = row.parentNode
-  const menu_id = row.dataset.menuid
-  var index = cart.findIndex(item => item.id === +menu_id);
-  cart.splice(index, 1);
-  tr.remove()
-
-}
-
-// <!-- --------------------------------------------------บันทึกเพื่อแทงหนังสือไปลงชีต------------------ -->
-function saveFormSend(){
-  let userAction = $('#userAction').val()
-  if(userAction == ''){alert('กรอกด้วย') 
-  return}
-  let id = $('#inputID').val()
-  console.log('id', id)
-  let user = $('#nameAdmin').text()
-  if(user!=""){
-    //console.log('ผู้ได้รับมอบหมาย'+userAction)
-  Swal.fire({ title: 'รอสักครู่..' });
-  Swal.showLoading();
-     google.script.run.withSuccessHandler((data)=>{
-      row_dt.data(JSON.parse(data)[0]).draw(false)
-     $('.modal').find('form').trigger('reset').find('textarea').val('')
-     $('.modal').modal('hide')
-     clearlist()
-    Swal.fire({
-      icon: 'success',
-      title: 'บันทึกข้อมูลเรียบร้อยแล้ว',
-      showConfirmButton: false,
-      timer: 1500
-    } )     
-          }).saveDataSend(id,cart,userAction)
-    }else{
-      Swal.fire('กรุณาเข้าระบบ')
-     }
-    }
-
-  //โหลดข้อมูลจากชีตหนังสือส่ง แสดงในตาราง datatable
-  google.script.run.withSuccessHandler(dataTablePost).searchData('หนังสือส่ง')
-  var dataArray
-  function dataTablePost(item) {
-    DataTable.Buttons.defaults.dom.button.className = 'btn';
-    $('#table3').hide()
-    if (!item) return
-    dataArray = item
-      $('#datatablepost').DataTable({
-        //  dom: 'Bfrtip',
-        dom: '<"d-flex justify-content-between"Bf>rt<"d-flex justify-content-between"ip>',
-         buttons: {
-             buttons: [
-          {
-            extend: 'excelHtml5',
-            text: '<i class="fa fa-file-excel-o" style="font-size:20px ; background-color: #3ca23c"></i>',
-            titleAttr: 'Excel'
-          }
-          // { extend: 'print'},
-        ],
-        dom: {
-          button: {
-               className: 'btn btn-success'
-          },
-          buttonLiner: {
-               tag: null
-          }
-         }
-    },
-        data: item,
-        columns: [
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-                return "<button type='button' class='btn btn-success  btn-sm editBtn'><i class='bx bxs-user'></i></button>";
-            }
-          },
-          { data: 0 },
-          { data: 2 },
-          { data: 3 },
-          { data: 4 },
-          { data: 5 },
-          { data: 6 },
-          { data: 7 },
-          { data: 8 },
-          { data: 9 },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[10] != '') {
-                return "<a  href='" + (row[10]) + "'target='_blank' class='btn btn-primary  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[11] != '') {
-                return "<a  href='" + (row[11]) + "'target='_blank' class='btn btn-danger  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[12] != '') {
-                return "<a  href='" + (row[12]) + "'target='_blank' class='btn btn-danger  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-        ],
-        destroy: true,    //ซ่อนคอลัม
-        responsive: true,
-        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/th.json', },
-        order: [[1, 'desc']],
-        // columnDefs: [
-        //         {targets: [0,1,3],className: 'all',},    
-        //  ],
-      });
-
-  }
-
- google.script.run.withSuccessHandler(dataTableCommand).searchData('คำสั่ง')
-  var dataArray
-  function dataTableCommand(item) {
-    $('#table4').hide()
-    if (!item) return
-    dataArray = item
-    DataTable.Buttons.defaults.dom.button.className = 'btn';
-    $(document).ready(function () {
-      
-      $('#datatablecommand').DataTable({
-        dom: '<"d-flex justify-content-between"Bf>rt<"d-flex justify-content-between"ip>',
-        buttons: {
-          buttons: [
-          {
-            extend: 'excelHtml5',
-            text: '<i class="fa fa-file-excel-o" style="font-size:20px ; background-color: #3ca23c"></i>',
-            titleAttr: 'Excel'
-          }
-          // { extend: 'print'},
-        ],
-        dom: {
-          button: {
-               className: 'btn btn-success'
-          },
-          buttonLiner: {
-               tag: null
-          }
-         }
-    },
-        data: item,
-        columns: [
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-                return "<button type='button' class='btn btn-success  btn-sm editBtn'><i class='bx bxs-user'></i></button>";
-            }
-          },
-          { data: 0 },
-          { data: 2 },
-          { data: 3 },
-          { data: 4 },
-          { data: 5 },
-          { data: 6 },
-          { data: 7 },
-
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[8] != '') {
-                return "<a  href='" + (row[8]) + "'target='_blank' class='btn btn-primary  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[9] != '') {
-                return "<a  href='" + (row[9]) + "'target='_blank' class='btn btn-danger  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[10] != '') {
-                return "<a  href='" + (row[10]) + "'target='_blank' class='btn btn-danger  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-        ],
-        destroy: true,    //ซ่อนคอลัม
-        responsive: true,
-        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/th.json', },
-        order: [[1, 'desc']],
-        // columnDefs: [
-        //         {targets: [0,1,3],className: 'all',},    
-        //  ],
-      });
-    });
-
-  }
-
- google.script.run.withSuccessHandler(dataTableAnnounce).searchData('ประกาศ')
-  var dataArray
-  function dataTableAnnounce(item) {
-    $('#table5').hide()
-    if (!item) return
-    dataArray = item
-    DataTable.Buttons.defaults.dom.button.className = 'btn';
-    $(document).ready(function () {
-      $('#datatableannounce').DataTable({
-          dom: '<"d-flex justify-content-between"Bf>rt<"d-flex justify-content-between"ip>',
-         buttons: {
-        buttons: [
-          {
-            extend: 'excelHtml5',
-            text: '<i class="fa fa-file-excel-o" style="font-size:20px ; background-color: #3ca23c"></i>',
-            titleAttr: 'Excel'
-          }
-          // { extend: 'print'},
-        ],
-        dom: {
-          button: {
-               className: 'btn btn-success'
-          },
-          buttonLiner: {
-               tag: null
-          }
-         }
-    },
-        data: item,
-        columns: [
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-                return "<button type='button' class='btn btn-success  btn-sm editBtn'><i class='bx bxs-user'></i></button>";
-            }
-          },
-          { data: 0 },
-          { data: 2 },
-          { data: 3 },
-          { data: 4 },
-          { data: 5 },
-          { data: 6 },
-          { data: 7 },
-          // {
-          //   data: null,
-          //   render: function (data, type, row, meta) {
-          //     if (row[7] != '') {
-          //       return "<a  href='" + (row[7]) + "'target='_blank' class='btn btn-primary btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-          //     } else {
-          //       return "";
-          //     }
-          //   }
-          // },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[8] != '') {
-                return "<a  href='" + (row[8]) + "'target='_blank' class='btn btn-primary  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[9] != '') {
-                return "<a  href='" + (row[9]) + "'target='_blank' class='btn btn-danger  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[10] != '') {
-                return "<a  href='" + (row[10]) + "'target='_blank' class='btn btn-danger  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-        ],
-        destroy: true,    //ซ่อนคอลัม
-        responsive: true,
-        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/th.json', },
-        order: [[1, 'desc']],
-        // columnDefs: [
-        //         {targets: [0,1,3],className: 'all',},    
-        //  ],
-      });
-    });
-
-  }
-
-
-// ดึงข้อมูลจากชีตบันทึก
-  let dataSend2
-
-  google.script.run.withSuccessHandler((result) => {
-    dataSend2 = result
-  }).searchData('บันทึก')
-
-  //โหลดข้อมูลจากชีตหนังสือบันทึกข้อความ แสดงในตาราง datatable
- // google.script.run.withSuccessHandler(datatablerecord).searchData('บันทึก')
-
-  var dataArray
-
-  function searchDataS2(item) {
-    var table = $('#datatablepost').DataTable();
-    DataTable.Buttons.defaults.dom.button.className = 'btn';
-    $('#table6').hide()
-    if (!item) return
-    dataArray = item
-    $(document).ready(function () {
-      $('#datatablerecord').DataTable({
-        //  dom: 'Bfrtip',
-        dom: '<"d-flex justify-content-between"Bf>rt<"d-flex justify-content-between"ip>',
-         buttons: {
-        buttons: [
-          {
-            extend: 'excelHtml5',
-            text: '<i class="fa fa-file-excel-o" style="font-size:20px ; background-color: #3ca23c"></i>',
-            titleAttr: 'Excel'
-          }
-          // { extend: 'print'},
-        ],
-        dom: {
-          button: {
-               className: 'btn btn-success'
-          },
-          buttonLiner: {
-               tag: null
-          }
-         }
-    },
-        data: item,
-        columns: [
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-                return "<button type='button' class='btn btn-info  btn-sm editBtn'><i class='bx bxs-user'></i></button>";
-            }
-          },
-          { data: 0 },
-          { data: 2 },
-          { data: 3 },
-          { data: 4 },
-          { data: 5 },
-          { data: 6 },
-          { data: 7 },
-          { data: 8 },
-          { data: 9 },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[10] != '') {
-                return "<a  href='" + (row[10]) + "'target='_blank' class='btn btn-primary  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[11] != '') {
-                return "<a  href='" + (row[11]) + "'target='_blank' class='btn btn-danger  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-          {
-            data: null,
-            render: function (data, type, row, meta) {
-              if (row[12] != '') {
-                return "<a  href='" + (row[12]) + "'target='_blank' class='btn btn-danger  btn-sm editBtn' ><i class='bx bxs-file'></i></a>";
-              } else {
-                return "";
-              }
-            }
-          },
-        ],
-        destroy: true,    //ซ่อนคอลัม
-        responsive: true,
-        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/th.json', },
-        order: [[1, 'desc']],
-        // columnDefs: [
-        //         {targets: [0,1,3],className: 'all',},    
-        //  ],
-      });
-    });
-
-  }
