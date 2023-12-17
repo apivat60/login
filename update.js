@@ -1,10 +1,11 @@
-
+waiting()
   function waiting(){
      Swal.fire({ title: 'loading..' });
       Swal.showLoading();
     setTimeout(() =>{
       Swal.close();
-        },2000)
+      welcome()
+        },3000)
   }
 //<-- -----------------------------------------โหลดข้อมูลผู้ใช้มาเก็บไว้ก่อน -->
   var datalogin,scripturl
@@ -29,7 +30,7 @@
     console.log('สถานะ ' + status)
     // notification(name)
     if (status === null) {
-      welcome()
+      
       $('#nav-btn3').addClass('d-none')
       google.script.run.withSuccessHandler(searchData).searchData('data')
     } else if (status == "admin") {
