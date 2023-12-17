@@ -478,7 +478,7 @@ $('#nav-btn-c').on('click',function() {
         }
   }
 
-//<-- ---------------------------------------สวิตช์ฟอร์มเมื่อกดปุ่ม submit -->
+//<-- --------------------------------------- สวิตช์ฟอร์มเมื่อกดปุ่ม submit -->
   function processForm(data){
     let targetFunc = $('#targetFunc').val()
     console.log(targetFunc)
